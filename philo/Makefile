@@ -3,6 +3,8 @@ NAME = philosophers
 CFLAGS = -Wall -Werror -Wextra
 
 SRCS = philosophers.c \
+		init_parsing.c \
+		utils.c \
 
 OBJS = $(SRCS:.c=.o)
 OBJDIR = objs/

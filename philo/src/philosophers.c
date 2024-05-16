@@ -6,52 +6,34 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/15 17:39:26 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/16 13:27:52 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philosophers.h"
-
-int	parsing(int argc, char **argv)
-{
-	int	i;
-	int	j;
-
-	i = 1;
-	j = 0;
-	if (argc != 5 && argc != 6)
-		return (printf("Error: wrong number of arguments!\n"), 1);
-	while (argv[i])
-	{
-		while (argv[i][j])
-		{
-			if (argv[i][j] < '0' || argv[i][j] > '9')
-				return (printf("Error: argument %d is wrong!\n", i), 1);
-			j++;
-		}
-		j = 0;
-		i++;
-	}
-	return (0);
-}
+#include "../inc/philosophers.h"
 
 int	main(int argc, char **argv)
 {
-	struct timeval	start;
-	struct timeval	end;
-	long			time_start;
-	long			time_end;
-	long			time_diff;
+	t_data	data;
+	t_philo	*philo;
 
-	parsing(argc, argv);
-	gettimeofday(&start, NULL);
-	usleep(200000);
-	gettimeofday(&end, NULL);
-	time_start = start.tv_sec * 1000 + start.tv_usec / 1000;
-	time_end = end.tv_sec * 1000 + end.tv_usec / 1000;
-	time_diff = time_end - time_start;
-	printf("Start = %ld ms\n", time_start);
-	printf("End   = %ld ms\n", time_end);
-	printf("Diff  = %ld ms\n", time_diff);
+	if (parsing(argc, argv))
+		return (1);
+	init_data(&data, argv);
+	data.philo = init_philo(&data);
+	philo = data.philo;
+	int i = 0;
+	while (i < philo->data->nb_philo)
+	{
+		printf("Philosopher ID: %d\n", philo->id);
+		printf("Number of times philosopher has eaten: %d\n", philo->nb_eat);
+		printf("Number of philosophers: %d\n", philo->data->nb_philo);
+		printf("Time to die: %d\n", philo->data->time_die);
+		printf("Time to eat: %d\n", philo->data->time_eat);
+		printf("Time to sleep: %d\n", philo->data->time_sleep);
+		printf("Max number of times to eat: %d\n\n\n", philo->data->nb_eat_max);
+		philo = philo->next;
+		i++;
+	}
 	return (0);
 }
