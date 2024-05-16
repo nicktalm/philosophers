@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:12:32 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/16 13:40:59 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/16 18:13:39 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	init_data(t_data *data, char **argv)
 		data->nb_eat_max = ft_atoi(argv[5]);
 	else
 		data->nb_eat_max = -1;
-	data->philo = init_philo(data);
 }
 
 t_philo	*create_philo(int id, t_data *data)
@@ -36,6 +35,9 @@ t_philo	*create_philo(int id, t_data *data)
 	philo->nb_eat = 0;
 	philo->data = data;
 	philo->next = NULL;
+	philo->start.tv_sec = 0;
+	philo->start.tv_usec = 0;
+	pthread_mutex_init(&philo->forks, NULL);
 	return (philo);
 }
 

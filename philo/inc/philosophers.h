@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/16 13:29:15 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/16 15:13:48 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	t_philo	*philo;
 	int		nb_philo;
 	int		time_die;
 	int		time_eat;
