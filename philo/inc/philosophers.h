@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/16 15:13:48 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/17 12:18:51 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ typedef struct s_philo
 {
 	int				id;
 	pthread_t		thread;
+	pthread_t		monitoring_thread;
 	struct timeval	start;
+	struct timeval	last_meal;
 	pthread_mutex_t	forks;
 	int				nb_eat;
 	struct s_data	*data;
@@ -32,11 +34,11 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	int		nb_philo;
-	int		time_die;
-	int		time_eat;
-	int		time_sleep;
-	int		nb_eat_max;
+	int				nb_philo;
+	int				time_die;
+	int				time_eat;
+	int				time_sleep;
+	int				nb_eat_max;
 }				t_data;
 
 // philosophers.c
