@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/17 12:15:55 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/21 15:49:06 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,46 @@ void	*routine(void *tmp)
 	return (NULL);
 }
 
+int	check_death(t_philo *p)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (p->data->nb_philo > i)
+	{
+		if (p->now_death.tv_sec)
+			count++;
+		p = p->next;
+		i++;
+	}
+	return (count);
+}
+
 void	*monitoring_thread(void *tmp)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)tmp;
+	while((philo->data->nb_eat_max > philo->nb_eat || philo->data->nb_eat_max == -1) && check_death(philo))
+	{
+		if (philo->last_meal.tv_sec == 0)
+			gettimeofday(&philo->last_meal, NULL);
+		if (philo->data->time_die < get_current_time(philo) - philo->last_meal.tv_sec)
+		{
+			usleep(100);
+			if (!pthread_mutex_lock(&philo->data->dead) && check_death(philo) == 0)
+			{
+				gettimeofday(&philo->now_death, NULL);
+				printf("%ld %d died 💀\n", get_current_time(philo), philo->id);
+				printf("STOOOOOOOOP\n\n\n\n\n\n\n");
+				exit(0);
+				pthread_mutex_unlock(&philo->data->dead);
+			}
+			return (NULL);
+		}
+	}
 	return (NULL);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/17 12:18:51 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/21 15:23:37 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,17 @@
 # include <unistd.h>
 # include <stdlib.h>
 
+typedef struct s_data
+{
+	struct s_philo	*philo;
+	int				nb_philo;
+	int				time_die;
+	int				time_eat;
+	int				time_sleep;
+	int				nb_eat_max;
+	pthread_mutex_t	dead;
+}				t_data;
+
 typedef struct s_philo
 {
 	int				id;
@@ -26,20 +37,12 @@ typedef struct s_philo
 	pthread_t		monitoring_thread;
 	struct timeval	start;
 	struct timeval	last_meal;
+	struct timeval	now_death;
 	pthread_mutex_t	forks;
 	int				nb_eat;
 	struct s_data	*data;
 	struct s_philo	*next;
 }				t_philo;
-
-typedef struct s_data
-{
-	int				nb_philo;
-	int				time_die;
-	int				time_eat;
-	int				time_sleep;
-	int				nb_eat_max;
-}				t_data;
 
 // philosophers.c
 
