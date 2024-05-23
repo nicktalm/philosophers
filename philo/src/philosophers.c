@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/21 15:49:06 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/23 17:03:04 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,23 @@ void	*routine(void *tmp)
 
 	philo = (t_philo *)tmp;
 	gettimeofday(&philo->start, NULL);
+	gettimeofday(&philo->last_meal, NULL);
 	if (philo->id % 2 == 0)
 		usleep(100);
-	while (philo->nb_eat < philo->data->nb_eat_max || philo->data->nb_eat_max == -1 )
+	while (philo->nb_eat < philo->data->nb_eat_max || philo->data->nb_eat_max == -1)
 	{
 		printf("%ld %d is thinking 🤔\n", get_current_time(philo), philo->id);
+		if (philo->data->nb_philo == 1)
+		{
+			usleep(philo->data->time_die);
+			printf("%ld %d died 💀\n", get_current_time(philo), philo->id);
+			return (NULL);
+		}
 		if (pthread_mutex_lock(&philo->forks) == 0)
 		{
 			if (pthread_mutex_lock(&philo->next->forks) == 0)
 			{
+				printf("%ld %d has taken a fork 🍽\n", get_current_time(philo), philo->id);
 				printf("%ld %d has taken a fork 🍽\n", get_current_time(philo), philo->id);
 				printf("%ld %d is eating 🍝\n", get_current_time(philo), philo->id);
 				usleep(philo->data->time_eat);
@@ -58,46 +66,28 @@ void	*routine(void *tmp)
 	return (NULL);
 }
 
-int	check_death(t_philo *p)
-{
-	int	i;
-	int	count;
+// int	check_death(t_philo *p)
+// {
+// 	int	i;
+// 	int	count;
 
-	i = 0;
-	count = 0;
-	while (p->data->nb_philo > i)
-	{
-		if (p->now_death.tv_sec)
-			count++;
-		p = p->next;
-		i++;
-	}
-	return (count);
-}
+// 	i = 0;
+// 	count = 0;
+// 	while (p->data->nb_philo > i)
+// 	{
+// 		if (p->now_death.tv_sec)
+// 			count++;
+// 		p = p->next;
+// 		i++;
+// 	}
+// 	return (count);
+// }
 
 void	*monitoring_thread(void *tmp)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)tmp;
-	while((philo->data->nb_eat_max > philo->nb_eat || philo->data->nb_eat_max == -1) && check_death(philo))
-	{
-		if (philo->last_meal.tv_sec == 0)
-			gettimeofday(&philo->last_meal, NULL);
-		if (philo->data->time_die < get_current_time(philo) - philo->last_meal.tv_sec)
-		{
-			usleep(100);
-			if (!pthread_mutex_lock(&philo->data->dead) && check_death(philo) == 0)
-			{
-				gettimeofday(&philo->now_death, NULL);
-				printf("%ld %d died 💀\n", get_current_time(philo), philo->id);
-				printf("STOOOOOOOOP\n\n\n\n\n\n\n");
-				exit(0);
-				pthread_mutex_unlock(&philo->data->dead);
-			}
-			return (NULL);
-		}
-	}
 	return (NULL);
 }
 
@@ -111,7 +101,7 @@ void	start_game(t_philo *philo, t_data *data)
 	while (i < data->nb_philo)
 	{
 		pthread_create(&tmp->thread, NULL, &routine, (void *)tmp);
-		pthread_create(&tmp->monitoring_thread, NULL, &monitoring_thread, (void *)tmp);
+		// pthread_create(&tmp->monitoring_thread, NULL, &monitoring_thread, (void *)tmp);
 		tmp = tmp->next;
 		i++;
 	}
@@ -120,7 +110,7 @@ void	start_game(t_philo *philo, t_data *data)
 	while (i < data->nb_philo)
 	{
 		pthread_join(tmp->thread, NULL);
-		pthread_join(tmp->monitoring_thread, NULL);
+		// pthread_join(tmp->monitoring_thread, NULL);
 		tmp = tmp->next;
 		i++;
 	}
@@ -130,9 +120,7 @@ int	main(int argc, char **argv)
 {
 	t_data	data;
 	t_philo	*philo;
-	int		i;
 
-	i = 0;
 	if (parsing(argc, argv))
 		return (1);
 	init_data(&data, argv);
