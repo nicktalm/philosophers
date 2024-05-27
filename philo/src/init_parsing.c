@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:12:32 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/16 18:13:39 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/27 16:37:06 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	init_data(t_data *data, char **argv)
 {
 	data->nb_philo = ft_atoi(argv[1]);
-	data->time_die = ft_atoi(argv[2]) * 1000;
+	data->time_die = ft_atoi(argv[2]);
 	data->time_eat = ft_atoi(argv[3]) * 1000;
 	data->time_sleep = ft_atoi(argv[4]) * 1000;
 	if (argv[5])
@@ -37,7 +37,10 @@ t_philo	*create_philo(int id, t_data *data)
 	philo->next = NULL;
 	philo->start.tv_sec = 0;
 	philo->start.tv_usec = 0;
+	philo->now_death.tv_sec = 0;
+	philo->now_death.tv_usec = 0;
 	pthread_mutex_init(&philo->forks, NULL);
+	pthread_mutex_init(&philo->data->dead, NULL);
 	return (philo);
 }
 
