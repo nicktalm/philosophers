@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:12:32 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/28 13:52:43 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/28 17:03:53 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ t_philo	*create_philo(int id, t_data *data)
 	philo->now_death.tv_usec = 0;
 	pthread_mutex_init(&philo->forks, NULL);
 	pthread_mutex_init(&philo->data->dead, NULL);
-	// pthread_mutex_init(&philo->data->check_dead, NULL);
 	return (philo);
 }
 

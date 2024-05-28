@@ -6,11 +6,31 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/28 14:36:28 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/28 17:02:19 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
+
+void	ft_usleep(unsigned int microseconds)
+{
+	struct timeval	start;
+	struct timeval	current;
+	long			elapsed;
+
+	elapsed = 0;
+	if (gettimeofday(&start, NULL) == -1)
+		return ;
+	while (elapsed < microseconds)
+	{
+		if (gettimeofday(&current, NULL) == -1)
+			return ;
+		elapsed = (current.tv_sec - start.tv_sec) * 1000000;
+		elapsed += (current.tv_usec - start.tv_usec);
+		if (microseconds - elapsed > 1000)
+			usleep(100);
+	}
+}
 
 int	check_for_death(t_philo *philo)
 {
@@ -50,12 +70,12 @@ void	ft_message(long time, int id, int i, t_philo *philo)
 			printf("%ld %d has taken a fork 🍽\n", time, id);
 			printf("%ld %d has taken a fork 🍽\n", time, id);
 			printf("%ld %d is eating 🍝\n", time, id);
-			usleep(philo->data->time_eat);
+			ft_usleep(philo->data->time_eat);
 		}
 		else if (i == 1)
 		{
 			printf("%ld %d is sleeping 😴\n", time, id);
-			usleep(philo->data->time_sleep);
+			ft_usleep(philo->data->time_sleep);
 		}
 		else if (i == 2)
 			printf("%ld %d is thinking 🤔\n", time, id);
@@ -72,7 +92,7 @@ void	*routine(void *tmp)
 	gettimeofday(&philo->start, NULL);
 	gettimeofday(&philo->last_meal, NULL);
 	if (philo->id % 2 == 0)
-		usleep(100);
+		ft_usleep(100);
 	while ((philo->nb_eat < philo->data->nb_eat_max || philo->data->nb_eat_max == -1) && check_for_death(philo) == 0)
 	{
 		ft_message(ft_get_time(philo->start), philo->id, 2, philo);
@@ -110,7 +130,6 @@ void	*monitoring_thread(void *tmp)
 			gettimeofday(&(philo)->last_meal, NULL);
 		if (philo->data->time_die < ft_get_time(philo->last_meal))
 		{
-			usleep(100);
 			if (!pthread_mutex_lock(&philo->data->dead) && check_for_death(philo) == 0)
 			{
 				gettimeofday(&philo->now_death, NULL);
@@ -150,6 +169,28 @@ void	start_game(t_philo *philo, t_data *data)
 	}
 }
 
+void	free_philo(t_philo *philo)
+{
+	t_philo	*tmp;
+	t_philo	*next;
+	int		i;
+	int		nb_philo;
+
+	i = 0;
+	nb_philo = philo->data->nb_philo;
+	tmp = philo;
+	next = tmp->next;
+	while (i < nb_philo)
+	{
+		pthread_mutex_destroy(&tmp->forks);
+		pthread_mutex_destroy(&tmp->data->dead);
+		free(tmp);
+		tmp = next;
+		next = tmp->next;
+		i++;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
@@ -160,5 +201,6 @@ int	main(int argc, char **argv)
 	init_data(&data, argv);
 	philo = init_philo(&data);
 	start_game(philo, &data);
+	free_philo(philo);
 	return (0);
 }

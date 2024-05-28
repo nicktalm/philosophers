@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/28 13:39:30 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/28 16:28:11 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ typedef struct s_data
 	int				time_sleep;
 	int				nb_eat_max;
 	pthread_mutex_t	dead;
-	// pthread_mutex_t	check_dead;
 }				t_data;
 
 typedef struct s_philo
