@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/27 17:33:32 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/28 14:36:28 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ void	*routine(void *tmp)
 	while ((philo->nb_eat < philo->data->nb_eat_max || philo->data->nb_eat_max == -1) && check_for_death(philo) == 0)
 	{
 		ft_message(ft_get_time(philo->start), philo->id, 2, philo);
+		if (philo->data->nb_philo == 1)
+			return (NULL);
 		if (pthread_mutex_lock(&philo->forks) == 0)
 		{
 			if (pthread_mutex_lock(&philo->next->forks) == 0)
@@ -93,7 +95,7 @@ void	*routine(void *tmp)
 		ft_message(ft_get_time(philo->start), philo->id, 1, philo);
 		// usleep(philo->data->time_sleep);
 	}
-	printf("id = %d\n", philo->id);
+	// printf("id = %d\n", philo->id);
 	return (NULL);
 }
 
@@ -113,13 +115,13 @@ void	*monitoring_thread(void *tmp)
 			{
 				gettimeofday(&philo->now_death, NULL);
 				ft_message(ft_get_time(philo->start), philo->id, 3, philo);
-				pthread_mutex_unlock(&philo->data->dead);
 			}
-			printf("monitoring1 id = %d\n", philo->id);
+			pthread_mutex_unlock(&philo->data->dead);
+			// printf("monitoring1 id = %d\n", philo->id);
 			return (NULL);
 		}
 	}
-	printf("monitoring2 id = %d\n", philo->id);
+	// printf("monitoring2 id = %d\n", philo->id);
 	return (NULL);
 }
 
