@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ntalmon <ntalmon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/28 16:28:11 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/29 13:47:40 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,12 @@ typedef struct s_data
 	int				time_eat;
 	int				time_sleep;
 	int				nb_eat_max;
-	pthread_mutex_t	dead;
+	int				dead_philo;
+	struct timeval	start;
+	pthread_mutex_t	check_write;
+	pthread_mutex_t	check_death;
+	pthread_mutex_t	check_meal;
+	pthread_mutex_t	check;
 }				t_data;
 
 typedef struct s_philo
@@ -35,7 +40,6 @@ typedef struct s_philo
 	int				id;
 	pthread_t		thread;
 	pthread_t		monitoring_thread;
-	struct timeval	start;
 	struct timeval	last_meal;
 	struct timeval	now_death;
 	pthread_mutex_t	forks;

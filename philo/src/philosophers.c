@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ntalmon <ntalmon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/28 17:02:19 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/29 14:01:29 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,34 @@ void	ft_usleep(unsigned int microseconds)
 	}
 }
 
-int	check_for_death(t_philo *philo)
-{
-	int	i;
+// int	check_for_death(t_philo *philo)
+// {
+// 	int	i;
 
-	i = 0;
-	while (i < philo->data->nb_philo)
-	{
-		if (philo->now_death.tv_sec != 0)
-			return (1);
-		philo = philo->next;
-		i++;
-	}
-	return (0);
-}
+// 	i = 0;
+// 	while (i < philo->data->nb_philo)
+// 	{
+// 		if (philo->now_death.tv_sec != 0)
+// 			return (1);
+// 		philo = philo->next;
+// 		i++;
+// 	}
+// 	return (0);
+// }
+
+// long	ft_get_time(struct timeval time)
+// {
+// 	struct timeval	time_now;
+// 	long			start_time;
+// 	long			current_time;
+
+// 	if (time.tv_sec == 0)
+// 		gettimeofday(&time, NULL);
+// 	gettimeofday(&time_now, NULL);
+// 	start_time = (time.tv_sec * 1000000 + time.tv_usec);
+// 	current_time = (time_now.tv_sec * 1000000 + time_now.tv_usec);
+// 	return (current_time / 1000 - start_time / 1000);
+// }
 
 long	ft_get_time(struct timeval time)
 {
@@ -53,6 +67,8 @@ long	ft_get_time(struct timeval time)
 	long			start_time;
 	long			current_time;
 
+	if (time.tv_sec == 0)
+		gettimeofday(&time, NULL);
 	gettimeofday(&time_now, NULL);
 	start_time = (time.tv_sec * 1000
 			+ time.tv_usec / 1000);
@@ -63,25 +79,27 @@ long	ft_get_time(struct timeval time)
 
 void	ft_message(long time, int id, int i, t_philo *philo)
 {
-	if (check_for_death(philo) == 0)
+	if (!pthread_mutex_lock(&philo->data->check_write))
 	{
-		if (i == 0)
+		if (philo->data->dead_philo == 0)
 		{
-			printf("%ld %d has taken a fork 🍽\n", time, id);
-			printf("%ld %d has taken a fork 🍽\n", time, id);
-			printf("%ld %d is eating 🍝\n", time, id);
-			ft_usleep(philo->data->time_eat);
+			if (i == 0)
+			{
+				printf("%ld %d has taken a fork 🍽\n", time, id);
+				printf("%ld %d has taken a fork 🍽\n", time, id);
+				printf("%ld %d is eating 🍝\n", time, id);
+			}
+			else if (i == 1)
+			{
+				printf("%ld %d is sleeping 😴\n", time, id);
+			}
+			else if (i == 2)
+				printf("%ld %d is thinking 🤔\n", time, id);
 		}
-		else if (i == 1)
-		{
-			printf("%ld %d is sleeping 😴\n", time, id);
-			ft_usleep(philo->data->time_sleep);
-		}
-		else if (i == 2)
-			printf("%ld %d is thinking 🤔\n", time, id);
+		if (i == 3)
+			printf("\033[1;31m%ld %d died 💀\033[0m\n", time, id);
+		pthread_mutex_unlock(&philo->data->check_write);
 	}
-	if (i == 3)
-		printf("\033[1;31m%ld %d died 💀\033[0m\n", time, id);
 }
 
 void	*routine(void *tmp)
@@ -89,33 +107,37 @@ void	*routine(void *tmp)
 	t_philo	*philo;
 
 	philo = (t_philo *)tmp;
-	gettimeofday(&philo->start, NULL);
-	gettimeofday(&philo->last_meal, NULL);
+	if (!pthread_mutex_lock(&philo->data->check_meal))
+	{
+		gettimeofday(&philo->last_meal, NULL);
+		pthread_mutex_unlock(&philo->data->check_meal);
+	}
 	if (philo->id % 2 == 0)
 		ft_usleep(100);
-	while ((philo->nb_eat < philo->data->nb_eat_max || philo->data->nb_eat_max == -1) && check_for_death(philo) == 0)
+	while ((philo->nb_eat < philo->data->nb_eat_max || philo->data->nb_eat_max == -1) && philo->data->dead_philo == 0)
 	{
-		ft_message(ft_get_time(philo->start), philo->id, 2, philo);
+		ft_message(ft_get_time(philo->data->start), philo->id, 2, philo);
 		if (philo->data->nb_philo == 1)
 			return (NULL);
 		if (pthread_mutex_lock(&philo->forks) == 0)
 		{
 			if (pthread_mutex_lock(&philo->next->forks) == 0)
 			{
-				ft_message(ft_get_time(philo->start), philo->id, 0, philo);
-				// usleep(philo->data->time_eat);
-				philo->nb_eat++;
-				gettimeofday(&philo->last_meal, NULL);
-				// printf("\033[1;31mnb_eat: %d id: %d\033[0m\n", philo->nb_eat, philo->id);
-				// printf("last_meal: %ld\n", philo->last_meal.tv_sec);
+				ft_message(ft_get_time(philo->data->start), philo->id, 0, philo);
+				ft_usleep(philo->data->time_eat);
+				if (!pthread_mutex_lock(&philo->data->check_meal))
+				{
+					philo->nb_eat++;
+					gettimeofday(&philo->last_meal, NULL);
+					pthread_mutex_unlock(&philo->data->check_meal);
+				}
 				pthread_mutex_unlock(&philo->next->forks);
 			}
 			pthread_mutex_unlock(&philo->forks);
 		}
-		ft_message(ft_get_time(philo->start), philo->id, 1, philo);
-		// usleep(philo->data->time_sleep);
+		ft_usleep(philo->data->time_sleep);
+		ft_message(ft_get_time(philo->data->start), philo->id, 1, philo);
 	}
-	// printf("id = %d\n", philo->id);
 	return (NULL);
 }
 
@@ -124,23 +146,25 @@ void	*monitoring_thread(void *tmp)
 	t_philo	*philo;
 
 	philo = (t_philo *)tmp;
-	while ((philo->nb_eat < philo->data->nb_eat_max || philo->data->nb_eat_max == -1) && check_for_death(philo) == 0)
+	while ((philo->nb_eat < philo->data->nb_eat_max || philo->data->nb_eat_max == -1) && philo->data->dead_philo == 0)
 	{
 		if (philo->last_meal.tv_sec == 0)
 			gettimeofday(&(philo)->last_meal, NULL);
 		if (philo->data->time_die < ft_get_time(philo->last_meal))
 		{
-			if (!pthread_mutex_lock(&philo->data->dead) && check_for_death(philo) == 0)
+			if (!pthread_mutex_lock(&philo->data->check_death) && philo->data->dead_philo == 0)
 			{
-				gettimeofday(&philo->now_death, NULL);
-				ft_message(ft_get_time(philo->start), philo->id, 3, philo);
+				if (!pthread_mutex_lock(&philo->data->check))
+				{
+					philo->data->dead_philo = 1;
+					ft_message(ft_get_time(philo->data->start), philo->id, 3, philo);
+					pthread_mutex_unlock(&philo->data->check);
+				}
 			}
-			pthread_mutex_unlock(&philo->data->dead);
-			// printf("monitoring1 id = %d\n", philo->id);
+			pthread_mutex_unlock(&philo->data->check_death);
 			return (NULL);
 		}
 	}
-	// printf("monitoring2 id = %d\n", philo->id);
 	return (NULL);
 }
 
@@ -151,6 +175,7 @@ void	start_game(t_philo *philo, t_data *data)
 
 	tmp = philo;
 	i = 0;
+	gettimeofday(&philo->data->start, NULL);
 	while (i < data->nb_philo)
 	{
 		pthread_create(&tmp->thread, NULL, &routine, (void *)tmp);
@@ -179,14 +204,15 @@ void	free_philo(t_philo *philo)
 	i = 0;
 	nb_philo = philo->data->nb_philo;
 	tmp = philo;
-	next = tmp->next;
+	pthread_mutex_destroy(&philo->data->check_write);
+	pthread_mutex_destroy(&philo->data->check_death);
+	pthread_mutex_destroy(&philo->data->check_meal);
 	while (i < nb_philo)
 	{
+		next = tmp->next;
 		pthread_mutex_destroy(&tmp->forks);
-		pthread_mutex_destroy(&tmp->data->dead);
 		free(tmp);
 		tmp = next;
-		next = tmp->next;
 		i++;
 	}
 }

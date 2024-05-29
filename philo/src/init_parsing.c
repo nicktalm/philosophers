@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_parsing.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ntalmon <ntalmon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:12:32 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/28 17:03:53 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/05/29 13:47:11 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,17 @@ t_philo	*create_philo(int id, t_data *data)
 	philo->nb_eat = 0;
 	philo->data = data;
 	philo->next = NULL;
-	philo->start.tv_sec = 0;
-	philo->start.tv_usec = 0;
+	philo->data->dead_philo = 0;
+	philo->data->start.tv_sec = 0;
+	philo->data->start.tv_usec = 0;
 	philo->now_death.tv_sec = 0;
 	philo->now_death.tv_usec = 0;
+	philo->last_meal.tv_sec = 0;
+	philo->last_meal.tv_usec = 0;
 	pthread_mutex_init(&philo->forks, NULL);
-	pthread_mutex_init(&philo->data->dead, NULL);
+	pthread_mutex_init(&philo->data->check_write, NULL);
+	pthread_mutex_init(&philo->data->check_death, NULL);
+	pthread_mutex_init(&philo->data->check_meal, NULL);
 	return (philo);
 }
 
