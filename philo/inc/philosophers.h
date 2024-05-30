@@ -28,11 +28,12 @@ typedef struct s_data
 	int				time_sleep;
 	int				nb_eat_max;
 	int				dead_philo;
-	struct timeval	start;
 	pthread_mutex_t	check_write;
 	pthread_mutex_t	check_death;
 	pthread_mutex_t	check_meal;
+	pthread_mutex_t	check_nbr_meal;
 	pthread_mutex_t	check;
+	struct timeval	start;
 }				t_data;
 
 typedef struct s_philo

@@ -46,6 +46,8 @@ t_philo	*create_philo(int id, t_data *data)
 	pthread_mutex_init(&philo->data->check_write, NULL);
 	pthread_mutex_init(&philo->data->check_death, NULL);
 	pthread_mutex_init(&philo->data->check_meal, NULL);
+	pthread_mutex_init(&philo->data->check_nbr_meal, NULL);
+	pthread_mutex_init(&philo->data->check, NULL);
 	return (philo);
 }
 
