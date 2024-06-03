@@ -3,50 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntalmon <ntalmon@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/30 07:32:43 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/03 13:27:18 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
+
 int	ft_mutex_2(t_philo *philo);
-
-void	ft_usleep(unsigned int microseconds)
-{
-	struct timeval	start;
-	struct timeval	current;
-	long			elapsed;
-
-	elapsed = 0;
-	if (gettimeofday(&start, NULL) == -1)
-		return ;
-	while (elapsed < microseconds)
-	{
-		if (gettimeofday(&current, NULL) == -1)
-			return ;
-		elapsed = (current.tv_sec - start.tv_sec) * 1000000;
-		elapsed += (current.tv_usec - start.tv_usec);
-		if (microseconds - elapsed > 1000)
-			usleep(100);
-	}
-}
-
-// int	check_for_death(t_philo *philo)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (i < philo->data->nb_philo)
-// 	{
-// 		if (philo->now_death.tv_sec != 0)
-// 			return (1);
-// 		philo = philo->next;
-// 		i++;
-// 	}
-// 	return (0);
-// }
 
 // long	ft_get_time(struct timeval time)
 // {
@@ -62,73 +28,21 @@ void	ft_usleep(unsigned int microseconds)
 // 	return (current_time / 1000 - start_time / 1000);
 // }
 
-long	ft_get_time(struct timeval time)
+long	get_time_in_milliseconds(struct timeval *time)
+{
+	return (time->tv_sec * 1000 + time->tv_usec / 1000);
+}
+
+long	ft_get_time(struct timeval start_time)
 {
 	struct timeval	time_now;
-	long			start_time;
-	long			current_time;
+	long			start_milliseconds;
+	long			current_milliseconds;
 
-	if (time.tv_sec == 0)
-		gettimeofday(&time, NULL);
 	gettimeofday(&time_now, NULL);
-	start_time = (time.tv_sec * 1000
-			+ time.tv_usec / 1000);
-	current_time = (time_now.tv_sec * 1000
-			+ time_now.tv_usec / 1000);
-	return ((current_time - start_time));
-}
-
-void	ft_message(int id, int i, t_philo *philo)
-{
-	long	time;
-
-	time = 0;
-	if (!pthread_mutex_lock(&philo->data->check_write))
-	{
-		time = ft_get_time(philo->data->start);
-		if (ft_mutex_2(philo) == 0)
-		{
-			if (i == 0)
-				printf("%ld %d has taken a fork 🍽\n", time, id);
-			else if (i == 1)
-				printf("%ld %d is eating 🍝\n", time, id);
-			else if (i == 2)
-			{
-				printf("%ld %d is sleeping 😴\n", time, id);
-			}
-			else if (i == 3)
-				printf("%ld %d is thinking 🤔\n", time, id);
-		}
-		if (i == 4)
-			printf("\033[1;31m%ld %d died 💀\033[0m\n", time, id);
-		pthread_mutex_unlock(&philo->data->check_write);
-	}
-}
-
-int	ft_mutex(t_philo *philo)
-{
-	int	value;
-
-	value = 0;
-	if (!pthread_mutex_lock(&philo->data->check_nbr_meal))
-	{
-		value = philo->nb_eat;
-		pthread_mutex_unlock(&philo->data->check_nbr_meal);
-	}
-	return (value);
-}
-
-int	ft_mutex_2(t_philo *philo)
-{
-	int	value;
-
-	value = 0;
-	if (!pthread_mutex_lock(&philo->data->check))
-	{
-		value = philo->data->dead_philo;
-		pthread_mutex_unlock(&philo->data->check);
-	}
-	return (value);
+	start_milliseconds = get_time_in_milliseconds(&start_time);
+	current_milliseconds = get_time_in_milliseconds(&time_now);
+	return (current_milliseconds - start_milliseconds);
 }
 
 void	*routine(void *tmp)
@@ -225,31 +139,6 @@ void	start_game(t_philo *philo, t_data *data)
 		pthread_join(tmp->thread, NULL);
 		pthread_join(tmp->monitoring_thread, NULL);
 		tmp = tmp->next;
-		i++;
-	}
-}
-
-void	free_philo(t_philo *philo)
-{
-	t_philo	*tmp;
-	t_philo	*next;
-	int		i;
-	int		nb_philo;
-
-	i = 0;
-	nb_philo = philo->data->nb_philo;
-	tmp = philo;
-	pthread_mutex_destroy(&philo->data->check_write);
-	pthread_mutex_destroy(&philo->data->check_death);
-	pthread_mutex_destroy(&philo->data->check_meal);
-	pthread_mutex_destroy(&philo->data->check_nbr_meal);
-	pthread_mutex_destroy(&philo->data->check);
-	while (i < nb_philo)
-	{
-		next = tmp->next;
-		pthread_mutex_destroy(&tmp->forks);
-		free(tmp);
-		tmp = next;
 		i++;
 	}
 }

@@ -5,6 +5,7 @@ CFLAGS = -Wall -Werror -Wextra -g
 SRCS = philosophers.c \
 		init_parsing.c \
 		utils.c \
+		free.c \
 
 OBJS = $(SRCS:.c=.o)
 OBJDIR = objs/

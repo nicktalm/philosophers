@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntalmon <ntalmon@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/29 13:47:40 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/03 13:27:30 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,13 @@ int		parsing(int argc, char **argv);
 // utils.c
 
 int		ft_atoi(const char *str);
+int		ft_mutex(t_philo *philo);
+int		ft_mutex_2(t_philo *philo);
+void	ft_usleep(unsigned int microseconds);
+void	ft_message(int id, int i, t_philo *philo);
+
+// free.c
+
+void	free_philo(t_philo *philo);
 
 #endif
