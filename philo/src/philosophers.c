@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/03 13:27:18 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/03 15:40:52 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ void	*monitoring_thread(void *tmp)
 			gettimeofday(&(philo)->last_meal, NULL);
 		if (philo->data->time_die < ft_get_time(philo->last_meal))
 		{
-			if (!pthread_mutex_lock(&philo->data->check_death) && ft_mutex_2(philo) == 0)
+			if (!pthread_mutex_lock(&philo->data->check_death)
+				&& ft_mutex_2(philo) == 0)
 			{
 				if (!pthread_mutex_lock(&philo->data->check))
 				{
@@ -113,34 +114,36 @@ void	*monitoring_thread(void *tmp)
 			pthread_mutex_unlock(&philo->data->check_death);
 			return (NULL);
 		}
+		philo = philo->next;
 	}
 	return (NULL);
 }
 
 void	start_game(t_philo *philo, t_data *data)
 {
-	t_philo	*tmp;
-	int		i;
+	t_philo		*tmp;
+	int			i;
+	pthread_t	moni;
 
 	tmp = philo;
 	i = 0;
 	gettimeofday(&philo->data->start, NULL);
 	while (i < data->nb_philo)
 	{
-		pthread_create(&tmp->thread, NULL, &routine, (void *)tmp);
-		pthread_create(&tmp->monitoring_thread, NULL, &monitoring_thread, (void *)tmp);
+		pthread_create(&tmp->thread, NULL, routine, (void *)tmp);
 		tmp = tmp->next;
 		i++;
 	}
+	pthread_create(&moni, NULL, monitoring_thread, (void *)tmp);
 	tmp = philo;
 	i = 0;
 	while (i < data->nb_philo)
 	{
 		pthread_join(tmp->thread, NULL);
-		pthread_join(tmp->monitoring_thread, NULL);
 		tmp = tmp->next;
 		i++;
 	}
+	pthread_join(moni, NULL);
 }
 
 int	main(int argc, char **argv)

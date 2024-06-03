@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/03 13:27:30 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/03 13:48:32 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ typedef struct s_philo
 {
 	int				id;
 	pthread_t		thread;
-	pthread_t		monitoring_thread;
+	pthread_t		monitoring;
 	struct timeval	last_meal;
 	struct timeval	now_death;
 	pthread_mutex_t	forks;
