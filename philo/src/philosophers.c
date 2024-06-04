@@ -6,13 +6,11 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/03 15:40:52 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/04 13:27:09 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
-
-int	ft_mutex_2(t_philo *philo);
 
 // long	ft_get_time(struct timeval time)
 // {
@@ -56,10 +54,9 @@ void	*routine(void *tmp)
 		pthread_mutex_unlock(&philo->data->check_meal);
 	}
 	if (philo->id % 2 == 0)
-		ft_usleep(100);
+		ft_usleep(50);
 	while ((ft_mutex(philo) < philo->data->nb_eat_max || philo->data->nb_eat_max == -1) && ft_mutex_2(philo) == 0)
 	{
-		ft_message(philo->id, 3, philo);
 		if (philo->data->nb_philo == 1)
 			return (NULL);
 		if (pthread_mutex_lock(&philo->forks) == 0)
@@ -84,8 +81,9 @@ void	*routine(void *tmp)
 			}
 			pthread_mutex_unlock(&philo->forks);
 		}
-		ft_usleep(philo->data->time_sleep);
 		ft_message(philo->id, 2, philo);
+		ft_usleep(philo->data->time_sleep);
+		ft_message(philo->id, 3, philo);
 	}
 	return (NULL);
 }
