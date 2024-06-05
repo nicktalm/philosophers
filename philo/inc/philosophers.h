@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/05 14:53:20 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/05 18:26:04 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,18 @@ void	ft_message(int id, int i, t_philo *philo);
 // free.c
 
 void	free_philo(t_philo *philo);
+
+// time.c
+
+long	get_time_in_milliseconds(struct timeval *time);
+long	ft_get_time(struct timeval start_time);
+
+// routine.c
+
+void	*monitoring_thread(void *tmp);
+void	*routine(void *tmp);
+void	start_game(t_philo *philo, t_data *data);
+void	perform_eating(t_philo *philo, pthread_mutex_t *fork_1,
+			pthread_mutex_t *fork_2);
 
 #endif

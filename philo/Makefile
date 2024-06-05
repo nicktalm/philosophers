@@ -6,6 +6,8 @@ SRCS = philosophers.c \
 		init_parsing.c \
 		utils.c \
 		free.c \
+		time.c \
+		routine.c \
 
 OBJS = $(SRCS:.c=.o)
 OBJDIR = objs/
