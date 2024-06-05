@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:39 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/04 13:27:09 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/05 17:01:24 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,27 +59,55 @@ void	*routine(void *tmp)
 	{
 		if (philo->data->nb_philo == 1)
 			return (NULL);
-		if (pthread_mutex_lock(&philo->forks) == 0)
+		if (philo->id % 2 == 0)
+		{
+			if (pthread_mutex_lock(&philo->forks) == 0)
+			{
+				if (pthread_mutex_lock(&philo->next->forks) == 0)
+				{
+					ft_message(philo->id, 0, philo);
+					ft_message(philo->id, 0, philo);
+					ft_message(philo->id, 1, philo);
+					ft_usleep(philo->data->time_eat);
+					if (!pthread_mutex_lock(&philo->data->check_nbr_meal))
+					{
+						philo->nb_eat++;
+						pthread_mutex_unlock(&philo->data->check_nbr_meal);
+					}
+					if (!pthread_mutex_lock(&philo->data->check_meal))
+					{
+						gettimeofday(&philo->last_meal, NULL);
+						pthread_mutex_unlock(&philo->data->check_meal);
+					}
+					pthread_mutex_unlock(&philo->next->forks);
+				}
+				pthread_mutex_unlock(&philo->forks);
+			}
+		}
+		else
 		{
 			if (pthread_mutex_lock(&philo->next->forks) == 0)
 			{
-				ft_message(philo->id, 0, philo);
-				ft_message(philo->id, 0, philo);
-				ft_message(philo->id, 1, philo);
-				ft_usleep(philo->data->time_eat);
-				if (!pthread_mutex_lock(&philo->data->check_nbr_meal))
+				if (pthread_mutex_lock(&philo->forks) == 0)
 				{
-					philo->nb_eat++;
-					pthread_mutex_unlock(&philo->data->check_nbr_meal);
-				}
-				if (!pthread_mutex_lock(&philo->data->check_meal))
-				{
-					gettimeofday(&philo->last_meal, NULL);
-					pthread_mutex_unlock(&philo->data->check_meal);
+					ft_message(philo->id, 0, philo);
+					ft_message(philo->id, 0, philo);
+					ft_message(philo->id, 1, philo);
+					ft_usleep(philo->data->time_eat);
+					if (!pthread_mutex_lock(&philo->data->check_nbr_meal))
+					{
+						philo->nb_eat++;
+						pthread_mutex_unlock(&philo->data->check_nbr_meal);
+					}
+					if (!pthread_mutex_lock(&philo->data->check_meal))
+					{
+						gettimeofday(&philo->last_meal, NULL);
+						pthread_mutex_unlock(&philo->data->check_meal);
+					}
+					pthread_mutex_unlock(&philo->forks);
 				}
 				pthread_mutex_unlock(&philo->next->forks);
 			}
-			pthread_mutex_unlock(&philo->forks);
 		}
 		ft_message(philo->id, 2, philo);
 		ft_usleep(philo->data->time_sleep);
@@ -149,6 +177,7 @@ int	main(int argc, char **argv)
 	t_data	data;
 	t_philo	*philo;
 
+	philo = NULL;
 	if (parsing(argc, argv))
 		return (1);
 	init_data(&data, argv);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_parsing.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntalmon <ntalmon@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:12:32 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/05/29 13:47:11 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/05 14:55:15 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,14 @@ void	init_data(t_data *data, char **argv)
 		data->nb_eat_max = ft_atoi(argv[5]);
 	else
 		data->nb_eat_max = -1;
+	pthread_mutex_init(&data->check_write, NULL);
+	pthread_mutex_init(&data->check_death, NULL);
+	pthread_mutex_init(&data->check_meal, NULL);
+	pthread_mutex_init(&data->check_nbr_meal, NULL);
+	pthread_mutex_init(&data->check, NULL);
+	data->dead_philo = 0;
+	data->start.tv_sec = 0;
+	data->start.tv_usec = 0;
 }
 
 t_philo	*create_philo(int id, t_data *data)
@@ -35,19 +43,11 @@ t_philo	*create_philo(int id, t_data *data)
 	philo->nb_eat = 0;
 	philo->data = data;
 	philo->next = NULL;
-	philo->data->dead_philo = 0;
-	philo->data->start.tv_sec = 0;
-	philo->data->start.tv_usec = 0;
 	philo->now_death.tv_sec = 0;
 	philo->now_death.tv_usec = 0;
 	philo->last_meal.tv_sec = 0;
 	philo->last_meal.tv_usec = 0;
 	pthread_mutex_init(&philo->forks, NULL);
-	pthread_mutex_init(&philo->data->check_write, NULL);
-	pthread_mutex_init(&philo->data->check_death, NULL);
-	pthread_mutex_init(&philo->data->check_meal, NULL);
-	pthread_mutex_init(&philo->data->check_nbr_meal, NULL);
-	pthread_mutex_init(&philo->data->check, NULL);
 	return (philo);
 }
 
