@@ -6,12 +6,11 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:13:03 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/05 13:43:16 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/06 10:17:49 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
-long	ft_get_time(struct timeval start_time);
 
 int	ft_atoi(const char *str)
 {
