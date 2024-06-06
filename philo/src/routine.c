@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 18:24:47 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/06 14:59:23 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/06 16:20:56 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	*routine(void *tmp)
 		ft_message(philo->id, 2, philo);
 		ft_usleep(philo->data->time_sleep);
 		ft_message(philo->id, 3, philo);
-		ft_usleep(50);
+		ft_usleep(500);
 	}
 	return (NULL);
 }
