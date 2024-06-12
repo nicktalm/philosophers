@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:08:33 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/06 14:24:58 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/12 17:20:38 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ long	ft_get_time(struct timeval start_time);
 // routine.c
 
 void	perform_eating(t_philo *philo, pthread_mutex_t *fork_1,
-			pthread_mutex_t *fork_2);
+			pthread_mutex_t *fork_2, int i);
 void	*routine(void *tmp);
 long	check_last_meal(t_philo *philo);
 void	*monitoring_thread(void *tmp);
