@@ -1,6 +1,6 @@
 CC = cc
 NAME = philo
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra
 
 SRCS = philosophers.c \
 		init_parsing.c \

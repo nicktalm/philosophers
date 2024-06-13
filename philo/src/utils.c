@@ -6,7 +6,7 @@
 /*   By: ntalmon <ntalmon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:13:03 by ntalmon           #+#    #+#             */
-/*   Updated: 2024/06/06 10:17:49 by ntalmon          ###   ########.fr       */
+/*   Updated: 2024/06/13 11:34:53 by ntalmon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,18 @@ void	ft_message(int id, int i, t_philo *philo)
 		if (ft_mutex_2(philo) == 0)
 		{
 			if (i == 0)
-				printf("%ld %d has taken a fork\n", time, id);
+				printf("%ld %d has taken a fork 🍽\n", time, id);
 			else if (i == 1)
-				printf("%ld %d is eating\n", time, id);
+				printf("%ld %d is eating 🍝\n", time, id);
 			else if (i == 2)
 			{
-				printf("%ld %d is sleeping\n", time, id);
+				printf("%ld %d is sleeping 😴\n", time, id);
 			}
 			else if (i == 3)
-				printf("%ld %d is thinking\n", time, id);
+				printf("%ld %d is thinking 🤔\n", time, id);
 		}
 		if (i == 4)
-			printf("\033[1;31m%ld %d died\033[0m\n", time, id);
+			printf("%ld %d died 💀\n", time, id);
 		pthread_mutex_unlock(&philo->data->check_write);
 	}
 }
